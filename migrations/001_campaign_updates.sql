@@ -15,6 +15,9 @@ CREATE INDEX IF NOT EXISTS idx_campaign_updates_campaign_id ON campaign_updates(
 ALTER TABLE campaign_updates ENABLE ROW LEVEL SECURITY;
 
 -- Campaign Updates RLS
+DROP POLICY IF EXISTS "Updates readable for active campaigns" ON campaign_updates;
+DROP POLICY IF EXISTS "Admin can manage campaign updates" ON campaign_updates;
+
 CREATE POLICY "Updates readable for active campaigns" ON campaign_updates FOR SELECT USING (
   EXISTS (SELECT 1 FROM campaigns WHERE id = campaign_id AND is_active = true)
 );
