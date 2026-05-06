@@ -11,6 +11,16 @@ This directory contains SQL migrations for the BloomInKindes database.
 
 ## Available Migrations
 
+### 000_auth_trigger.sql ⚠️ **RUN THIS FIRST**
+
+Creates automatic profile creation when new users sign up:
+
+- `handle_new_user()` function: Triggered on auth.users insert
+- Automatically creates profile record with user's full_name
+- Essential for: User registration, role-based access control, admin features
+
+**Status:** CRITICAL - Run immediately before users can sign up
+
 ### 001_campaign_updates.sql
 
 Adds support for campaign updates/posts feature:
@@ -28,7 +38,8 @@ Adds support for campaign updates/posts feature:
 
 ## Migration Status
 
-- [x] 001_campaign_updates.sql - Deploy this now
+- [ ] 000_auth_trigger.sql - **CRITICAL: Deploy this first**
+- [ ] 001_campaign_updates.sql - Deploy after auth trigger
 
 ## Future Migrations
 
