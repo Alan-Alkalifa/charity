@@ -120,3 +120,24 @@ export async function createCollectionPoint(
   revalidatePath("/admin/campaigns");
   return { success: true };
 }
+
+export async function createCampaignUpdate(
+  campaignId: string,
+  formData: FormData
+) {
+  const supabase = await requireAdminClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Tidak terautentikasi" };
+
+  const { error } = await supabase.from("campaign_updates").insert({
+    campaign_id: campaignId,
+    title: String(formData.get("title")).trim(),
+    content: String(formData.get("content")).trim(),
+    image_url: String(formData.get("image_url") || "").trim() || null,
+    created_by: user.id,
+  });
+  if (error) return { error: error.message };
+  revalidatePath("/admin/campaigns");
+  revalidatePath(`/campaigns/${campaignId}`);
+  return { success: true };
+}

@@ -46,6 +46,17 @@ export interface Campaign {
   updated_at: string;
 }
 
+export interface CampaignUpdate {
+  id: string;
+  campaign_id: string;
+  title: string;
+  content: string;
+  image_url: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CampaignItem {
   id: string;
   campaign_id: string;
