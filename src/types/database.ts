@@ -9,7 +9,8 @@ export type EmailTemplate =
   | "receipt"
   | "pledge_confirm"
   | "volunteer_welcome"
-  | "campaign_update";
+  | "campaign_update"
+  | "contact";
 export type EmailStatus = "sent" | "delivered" | "bounced" | "failed";
 
 export interface Profile {
