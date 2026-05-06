@@ -1,12 +1,13 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { Plus, Package } from "lucide-react";
+import { Plus, Package, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createCampaignItem } from "@/app/actions/campaigns";
+import { deleteCampaignItem } from "@/app/actions/admin";
 import type { CampaignItem } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -18,7 +19,17 @@ interface Props {
 export function CampaignItemsSection({ campaignId, items }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = (itemId: string) => {
+    if (!confirm("Hapus item ini?")) return;
+    setDeletingId(itemId);
+    startTransition(async () => {
+      await deleteCampaignItem(itemId);
+      setDeletingId(null);
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,6 +71,14 @@ export function CampaignItemsSection({ campaignId, items }: Props) {
                 <p className="text-sm font-medium">{item.pledged_qty} / {item.target_qty}</p>
                 <p className="text-xs text-muted-foreground">terpledge</p>
               </div>
+              <button
+                onClick={() => handleDelete(item.id)}
+                disabled={deletingId === item.id}
+                className="text-muted-foreground hover:text-destructive transition-colors disabled:opacity-40 ml-2"
+                title="Hapus item"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
           ))}
         </div>

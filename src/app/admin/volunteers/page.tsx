@@ -4,15 +4,23 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/lib/utils";
 import type { VolunteerStatus } from "@/types";
+import { VolunteerActions } from "./volunteer-actions";
 
 export const metadata: Metadata = { title: "Relawan" };
-export const revalidate = 30;
+export const revalidate = 0;
 
 const STATUS_VARIANT: Record<VolunteerStatus, "warning" | "success" | "outline" | "secondary"> = {
   pending: "warning",
   approved: "success",
   active: "success",
   inactive: "secondary",
+};
+
+const STATUS_LABEL: Record<VolunteerStatus, string> = {
+  pending: "Pending",
+  approved: "Disetujui",
+  active: "Aktif",
+  inactive: "Nonaktif",
 };
 
 export default async function AdminVolunteersPage() {
@@ -41,12 +49,13 @@ export default async function AdminVolunteersPage() {
               <TableHead>Area</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Tanggal Daftar</TableHead>
+              <TableHead>Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {volunteers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                   Belum ada pendaftar relawan.
                 </TableCell>
               </TableRow>
@@ -63,11 +72,14 @@ export default async function AdminVolunteersPage() {
                   <TableCell className="text-sm text-muted-foreground">{v.availability ?? "—"}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{v.area ?? "—"}</TableCell>
                   <TableCell>
-                    <Badge variant={STATUS_VARIANT[v.status as VolunteerStatus]} className="capitalize">
-                      {v.status}
+                    <Badge variant={STATUS_VARIANT[v.status as VolunteerStatus]}>
+                      {STATUS_LABEL[v.status as VolunteerStatus]}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">{formatDate(v.applied_at)}</TableCell>
+                  <TableCell>
+                    <VolunteerActions id={v.id} currentStatus={v.status} />
+                  </TableCell>
                 </TableRow>
               ))
             )}

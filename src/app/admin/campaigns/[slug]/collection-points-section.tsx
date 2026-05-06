@@ -1,12 +1,13 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { Plus, MapPin } from "lucide-react";
+import { Plus, MapPin, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createCollectionPoint } from "@/app/actions/campaigns";
+import { deleteCollectionPoint } from "@/app/actions/admin";
 import type { CollectionPoint } from "@/types";
 
 interface Props {
@@ -17,7 +18,17 @@ interface Props {
 export function CollectionPointsSection({ campaignId, points }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = (pointId: string) => {
+    if (!confirm("Hapus titik pengumpulan ini?")) return;
+    setDeletingId(pointId);
+    startTransition(async () => {
+      await deleteCollectionPoint(pointId);
+      setDeletingId(null);
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,6 +65,14 @@ export function CollectionPointsSection({ campaignId, points }: Props) {
               <span className={`text-xs px-2 py-0.5 rounded-full ${pt.is_active ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"}`}>
                 {pt.is_active ? "Aktif" : "Nonaktif"}
               </span>
+              <button
+                onClick={() => handleDelete(pt.id)}
+                disabled={deletingId === pt.id}
+                className="text-muted-foreground hover:text-destructive transition-colors disabled:opacity-40 ml-1"
+                title="Hapus titik"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
           ))}
         </div>

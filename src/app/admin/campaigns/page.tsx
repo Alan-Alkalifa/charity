@@ -57,7 +57,7 @@ export default async function AdminCampaignsPage() {
                 <TableRow key={c.id}>
                   <TableCell>
                     <div>
-                      <Link href={`/admin/campaigns/${c.id}`} className="font-medium hover:text-primary hover:underline line-clamp-1">
+                      <Link href={`/admin/campaigns/${c.slug}`} className="font-medium hover:text-primary hover:underline line-clamp-1">
                         {c.title}
                       </Link>
                       {c.category && <p className="text-xs text-muted-foreground capitalize">{c.category}</p>}
